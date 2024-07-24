@@ -1,4 +1,6 @@
-﻿namespace StallosDotnetPleno.Domain.Entities
+﻿using StallosDotnetPleno.Domain.Interfaces;
+
+namespace StallosDotnetPleno.Domain.Entities
 {
     public class Address : BaseEntity
     {
@@ -14,7 +16,7 @@
 
         public string StateCode { get; private set; }
 
-        private Address(string postCode, string street, string number, string district, string city, string stateCode)
+        private Address(string postCode, string street, string number, string district, string city, string stateCode, IValidator<Address> validator)
         {
             PostCode = postCode;
             Street = street;
@@ -23,10 +25,8 @@
             City = city;
             StateCode = stateCode;
 
-            // Add entity validation
+            SetValidator(validator);
+            Validate();
         }
-
-        public static Address New(string postCode, string street, string number, string district, string city, string stateCode)
-            => new Address(postCode, street, number, district, city, stateCode);
     }
 }

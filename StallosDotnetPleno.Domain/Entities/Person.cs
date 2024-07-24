@@ -1,4 +1,5 @@
 ﻿using StallosDotnetPleno.Domain.Enums;
+using StallosDotnetPleno.Domain.Interfaces;
 
 namespace StallosDotnetPleno.Domain.Entities
 {
@@ -10,15 +11,14 @@ namespace StallosDotnetPleno.Domain.Entities
 
         public string Document { get; private set; }
 
-        private Person(string name, PersonType type, string document)
+        private Person(string name, PersonType type, string document, IValidator<Person> validator)
         {
             Name = name;
             Type = type;
             Document = document;
 
-            // Add entity validation
+            SetValidator(validator);
+            Validate();
         }
-
-        public static Person New(string name, PersonType type, string document) => new Person(name, type, document);
     }
 }
