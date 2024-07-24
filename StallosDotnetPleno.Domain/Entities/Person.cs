@@ -1,6 +1,6 @@
-﻿using StallosDotnetPleno.Domain.Entities.Enums;
+﻿using StallosDotnetPleno.Domain.Enums;
 
-namespace StallosDotnetPleno.Domain.Entities.Models
+namespace StallosDotnetPleno.Domain.Entities
 {
     public class Person : BaseEntity
     {
@@ -8,13 +8,13 @@ namespace StallosDotnetPleno.Domain.Entities.Models
 
         public PersonType Type { get; private set; }
 
-        public string Document {  get; private set; }
+        public string Document { get; private set; }
 
-        private Person (string name, PersonType type, string document)
+        private Person(string name, PersonType type, string document)
         {
-            this.Name = name;
-            this.Type = type;
-            this.Document = document;
+            Name = name;
+            Type = type;
+            Document = document;
 
             // Add entity validation
         }

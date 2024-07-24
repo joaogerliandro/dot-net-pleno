@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace StallosDotnetPleno.Domain.Entities.Enums
+namespace StallosDotnetPleno.Domain.Enums
 {
     public enum PersonType
     {
