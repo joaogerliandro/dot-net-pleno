@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace StallosDotnetPleno.Infrastructure.Repositories
 {
-    internal class AddressRepository : IRepository<Address>
+    public class AddressRepository : IRepository<Address>
     {
         private readonly AddressContext _context;
 
