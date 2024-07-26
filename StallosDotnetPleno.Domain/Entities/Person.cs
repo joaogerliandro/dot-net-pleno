@@ -1,5 +1,6 @@
 ﻿using StallosDotnetPleno.Domain.Enums;
 using StallosDotnetPleno.Domain.Interfaces;
+using System;
 
 namespace StallosDotnetPleno.Domain.Entities
 {
@@ -11,11 +12,14 @@ namespace StallosDotnetPleno.Domain.Entities
 
         public string Document { get; private set; }
 
-        private Person(string name, PersonType type, string document, IValidator<Person> validator)
+        public ICollection<Address> Addresses { get; set; }
+
+        public Person(string name, PersonType type, string document, IValidator<Person> validator)
         {
             Name = name;
             Type = type;
             Document = document;
+            Addresses = new HashSet<Address>();
 
             SetValidator(validator);
             Validate();
