@@ -1,18 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using StallosDotnetPleno.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Domain.Interfaces;
-using StallosDotnetPleno.Infrastructure.Context;
 using System.Linq.Expressions;
 
 namespace StallosDotnetPleno.Infrastructure.Repositories
 {
     public class PersonRepository : IRepository<Person>
     {
-        private readonly PersonContext _context;
+        private readonly Context _context;
 
         private readonly DbSet<Person> _dbSet;
 
-        public PersonRepository(PersonContext context)
+        public PersonRepository(Context context)
         {
             _context = context;
             _dbSet = context.Set<Person>();

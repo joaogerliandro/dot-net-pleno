@@ -1,9 +1,9 @@
 using StallosDotnetPleno.Domain.Interfaces;
 using StallosDotnetPleno.Domain.Entities;
-using StallosDotnetPleno.Infrastructure.Context;
 using StallosDotnetPleno.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using StallosDotnetPleno.Domain.Validators;
+using StallosDotnetPleno.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Configure DbContext with SQL Server
-builder.Services.AddDbContext<PersonContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseConnection")));
 
 // Register repositories
 builder.Services.AddScoped<IRepository<Person>, PersonRepository>();

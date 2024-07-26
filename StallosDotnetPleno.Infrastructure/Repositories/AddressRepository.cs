@@ -1,18 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Domain.Interfaces;
-using StallosDotnetPleno.Infrastructure.Context;
+using StallosDotnetPleno.Infrastructure.Data;
 using System.Linq.Expressions;
 
 namespace StallosDotnetPleno.Infrastructure.Repositories
 {
     public class AddressRepository : IRepository<Address>
     {
-        private readonly AddressContext _context;
+        private readonly Context _context;
 
         private readonly DbSet<Address> _dbSet;
 
-        public AddressRepository(AddressContext context)
+        public AddressRepository(Context context)
         {
             _context = context;
             _dbSet = context.Set<Address>();
