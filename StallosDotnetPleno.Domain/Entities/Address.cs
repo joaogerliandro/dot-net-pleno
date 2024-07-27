@@ -4,7 +4,7 @@ namespace StallosDotnetPleno.Domain.Entities
 {
     public class Address : BaseEntity
     {
-        public string PostCode { get; private set; }
+        public string ZipCode { get; private set; }
 
         public string Street { get; private set; }
 
@@ -18,9 +18,9 @@ namespace StallosDotnetPleno.Domain.Entities
 
         public ICollection<Person> Persons { get; set; }
 
-        private Address(string postCode, string street, string number, string district, string city, string stateCode, IValidator<Address> validator)
+        private Address(string zipCode, string street, string number, string district, string city, string stateCode, IValidator<Address> validator)
         {
-            PostCode = postCode;
+            ZipCode = zipCode;
             Street = street;
             Number = number;
             District = district;
