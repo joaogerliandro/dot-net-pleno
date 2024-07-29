@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace StallosDotnetPleno.Domain.Interfaces
+namespace StallosDotnetPleno.Infrastructure.Interfaces
 {
     public interface IRepository<T> where T : class
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StallosDotnetPleno.Domain.Entities;
-using StallosDotnetPleno.Domain.Interfaces;
+using StallosDotnetPleno.Infrastructure.Interfaces;
 using StallosDotnetPleno.Infrastructure.Data;
 using System.Linq.Expressions;
 
