@@ -18,7 +18,7 @@ namespace StallosDotnetPleno.Domain.Entities
 
         public ICollection<Person> Persons { get; set; }
 
-        public Address(string zipCode, string street, string number, string district, string city, string stateCode, IValidator<Address> validator)
+        public Address(string zipCode, string street, string number, string district, string city, string stateCode, ICollection<Person> persons)
         {
             ZipCode = zipCode;
             Street = street;
@@ -26,10 +26,7 @@ namespace StallosDotnetPleno.Domain.Entities
             District = district;
             City = city;
             StateCode = stateCode;
-            Persons = new HashSet<Person>();
-
-            SetValidator(validator);
-            Validate();
+            Persons = persons;
         }
     }
 }

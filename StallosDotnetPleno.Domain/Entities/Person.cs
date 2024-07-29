@@ -14,15 +14,12 @@ namespace StallosDotnetPleno.Domain.Entities
 
         public ICollection<Address> Addresses { get; set; }
 
-        public Person(string name, PersonType type, string document, IValidator<Person> validator)
+        public Person(string name, PersonType type, string document, ICollection<Address> addresses)
         {
             Name = name;
             Type = type;
             Document = document;
-            Addresses = new HashSet<Address>();
-
-            SetValidator(validator);
-            Validate();
+            Addresses = addresses;
         }
     }
 }
