@@ -1,18 +1,19 @@
-using StallosDotnetPleno.Domain.Interfaces;
-using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
-using StallosDotnetPleno.Domain.Validators;
 using StallosDotnetPleno.Infrastructure.Data;
+using StallosDotnetPleno.Application.Interfaces;
+using StallosDotnetPleno.Application.Services;
+using StallosDotnetPleno.Infrastructure.Interfaces;
+using StallosDotnetPleno.Domain.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-// Configure DbContext with SQL Server
+builder.Services.AddEndpointsApiExplorer();
+
+// Configure database context
 builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseConnection")));
 
@@ -20,12 +21,19 @@ builder.Services.AddDbContext<Context>(options =>
 builder.Services.AddScoped<IRepository<Person>, PersonRepository>();
 builder.Services.AddScoped<IRepository<Address>, AddressRepository>();
 
-// Register validators
-builder.Services.AddScoped<IValidator<Person>, PersonValidator>();
-builder.Services.AddScoped<IValidator<Address>, AddressValidator>();
-
 // Register services
-// builder.Services.AddScoped<ServiceClass>();
+builder.Services.AddScoped<IPersonService, PersonService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
+
+/*
+    Authentication Services
+ */
+
+builder.Services.AddSwaggerGen();
+
+// Add logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 var app = builder.Build();
 
@@ -33,13 +41,15 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "LibraryManagementSystem API v1");
+        c.RoutePrefix = string.Empty;
+    });
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
