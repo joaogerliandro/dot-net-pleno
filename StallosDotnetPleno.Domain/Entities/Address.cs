@@ -18,7 +18,7 @@ namespace StallosDotnetPleno.Domain.Entities
 
         public ICollection<Person> Persons { get; set; }
 
-        private Address(string zipCode, string street, string number, string district, string city, string stateCode, IValidator<Address> validator)
+        public Address(string zipCode, string street, string number, string district, string city, string stateCode, IValidator<Address> validator)
         {
             ZipCode = zipCode;
             Street = street;
