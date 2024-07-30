@@ -2,7 +2,7 @@
 
 namespace StallosDotnetPleno.Domain.Enums
 {
-    public enum PersonTypeEnum
+    public enum PersonType
     {
         [Description("Pessoa Física")]
         PF = 0,

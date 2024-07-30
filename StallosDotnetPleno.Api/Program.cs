@@ -5,8 +5,8 @@ using StallosDotnetPleno.Application.Interfaces;
 using StallosDotnetPleno.Application.Services;
 using StallosDotnetPleno.Infrastructure.Interfaces;
 using StallosDotnetPleno.Domain.Entities;
-using StallosDotnetPleno.Domain.Interfaces;
 using StallosDotnetPleno.Domain.Validators;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +28,6 @@ builder.Services.AddScoped<IPersonService, PersonService>();
 
 // Register validators
 builder.Services.AddScoped<IValidator<Person>, PersonValidator>();
-builder.Services.AddScoped<IValidator<Address>, AddressValidator>();
 
 /*
     Authentication Services

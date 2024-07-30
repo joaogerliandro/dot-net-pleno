@@ -13,25 +13,13 @@ namespace LibraryManagementSystem.Infrastructure.Data.Configurations
             builder.HasKey(p => p.Id);
 
             builder.Property(p => p.Name)
-                .HasColumnName("NOME")
-                .IsRequired()
-                .HasMaxLength(255);
+                .HasColumnName("NOME");
 
             builder.Property(p => p.Document)
-                .HasColumnName("DOCUMENTO")
-                .IsRequired()
-                .HasMaxLength(255);
+                .HasColumnName("DOCUMENTO");
 
             builder.HasIndex(p => p.Document)
                 .IsUnique();
-
-            builder.Property(p => p.PersonTypeId)
-                .HasColumnName("ID_TIPO_PESSOA")
-                .IsRequired();
-
-            builder.HasOne(p => p.Type)
-                .WithMany()
-                .HasForeignKey(p => p.PersonTypeId);
 
             builder.HasMany(p => p.Addresses)
                 .WithMany(a => a.Persons)

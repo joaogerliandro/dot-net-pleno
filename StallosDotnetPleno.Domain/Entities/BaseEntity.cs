@@ -1,5 +1,6 @@
-﻿using StallosDotnetPleno.Domain.Interfaces;
+﻿using FluentValidation;
 using StallosDotnetPleno.Domain.Notifications;
+using StallosDotnetPleno.Domain.Validators;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StallosDotnetPleno.Domain.Entities
@@ -12,7 +13,7 @@ namespace StallosDotnetPleno.Domain.Entities
         protected Notifier Notifier { get; } = new Notifier();
         
         [NotMapped]
-        protected IValidator<BaseEntity> Validator { get; set; }
+        protected EntityValidatorAdapter<BaseEntity> Validator { get; set; }
 
         [NotMapped]
         public bool IsValid { get; private set; }
@@ -23,7 +24,7 @@ namespace StallosDotnetPleno.Domain.Entities
 
         public void SetValidator<T>(IValidator<T> validator) where T : BaseEntity
         {
-            Validator = new EntityValidatorAdapter<T>(validator) as IValidator<BaseEntity>;
+            Validator = new EntityValidatorAdapter<T>(validator) as EntityValidatorAdapter<BaseEntity>;
         }
 
         public void Validate()

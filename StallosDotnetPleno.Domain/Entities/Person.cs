@@ -1,7 +1,4 @@
 ﻿using StallosDotnetPleno.Domain.Enums;
-using StallosDotnetPleno.Domain.Interfaces;
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StallosDotnetPleno.Domain.Entities
 {
@@ -9,10 +6,7 @@ namespace StallosDotnetPleno.Domain.Entities
     {
         public string Name { get; private set; }
 
-        [ForeignKey("PersonTypeId")]
         public PersonType Type { get; private set; }
-
-        public long PersonTypeId { get; private set; }
 
         public string Document { get; private set; }
 

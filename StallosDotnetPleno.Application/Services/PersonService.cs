@@ -1,9 +1,8 @@
 ﻿using StallosDotnetPleno.Application.Interfaces;
 using StallosDotnetPleno.Application.ResultObjects;
 using StallosDotnetPleno.Domain.Entities;
-using StallosDotnetPleno.Domain.Interfaces;
 using StallosDotnetPleno.Infrastructure.Interfaces;
-using System.Linq.Expressions;
+using FluentValidation;
 
 namespace StallosDotnetPleno.Application.Services
 {

@@ -1,6 +1,4 @@
-﻿using StallosDotnetPleno.Domain.Interfaces;
-
-namespace StallosDotnetPleno.Domain.Entities
+﻿namespace StallosDotnetPleno.Domain.Entities
 {
     public class Address : BaseEntity
     {

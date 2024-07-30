@@ -1,9 +1,11 @@
-﻿using StallosDotnetPleno.Domain.Interfaces;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Domain.Notifications;
 
-namespace StallosDotnetPleno.Domain.Entities
+namespace StallosDotnetPleno.Domain.Validators
 {
-    public class EntityValidatorAdapter<T> : IValidator<BaseEntity> where T : BaseEntity
+    public class EntityValidatorAdapter<T> where T : BaseEntity
     {
         private readonly IValidator<T> _validator;
 
@@ -12,9 +14,14 @@ namespace StallosDotnetPleno.Domain.Entities
             _validator = validator;
         }
 
-        public void Validate(BaseEntity entity, Notifier notifier)
+        public void Validate(T entity, Notifier notifier)
         {
-            _validator.Validate((T)entity, notifier);
+            ValidationResult result = _validator.Validate(entity);
+
+            foreach (var error in result.Errors)
+            {
+                notifier.AddNotification(error.PropertyName, error.ErrorMessage);
+            }
         }
     }
 }
