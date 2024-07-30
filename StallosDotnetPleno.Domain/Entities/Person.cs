@@ -14,6 +14,8 @@ namespace StallosDotnetPleno.Domain.Entities
 
         public ICollection<Address> Addresses { get; set; }
 
+        private Person() { }
+
         public Person(string name, PersonType type, string document, ICollection<Address> addresses)
         {
             Name = name;

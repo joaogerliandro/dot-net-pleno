@@ -18,6 +18,8 @@ namespace StallosDotnetPleno.Domain.Entities
 
         public ICollection<Person> Persons { get; set; }
 
+        private Address() { }
+
         public Address(string zipCode, string street, string number, string district, string city, string stateCode, ICollection<Person> persons)
         {
             ZipCode = zipCode;
