@@ -30,6 +30,7 @@ builder.Services.AddScoped<IPersonService, PersonService>();
 
 // Register validators
 builder.Services.AddScoped<IValidator<Person>, PersonValidator>();
+builder.Services.AddScoped<IValidator<Address>, AddressValidator>();
 
 /*
     Authentication Services
