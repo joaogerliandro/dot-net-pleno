@@ -1,11 +1,9 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
-using StallosDotnetPleno.Domain.Entities;
-using StallosDotnetPleno.Domain.Notifications;
 
-namespace StallosDotnetPleno.Domain.Validators
+namespace StallosDotnetPleno.Domain.Entities
 {
-    public class EntityValidatorAdapter<T> where T : BaseEntity
+    public class EntityValidatorAdapter<T> : IValidator<BaseEntity> where T : BaseEntity
     {
         private readonly IValidator<T> _validator;
 
@@ -14,14 +12,19 @@ namespace StallosDotnetPleno.Domain.Validators
             _validator = validator;
         }
 
-        public void Validate(T entity, Notifier notifier)
+        public ValidationResult Validate(BaseEntity instance)
         {
-            ValidationResult result = _validator.Validate(entity);
-
-            foreach (var error in result.Errors)
-            {
-                notifier.AddNotification(error.PropertyName, error.ErrorMessage);
-            }
+            return _validator.Validate((T)instance);
         }
+
+        public async Task<ValidationResult> ValidateAsync(BaseEntity instance, CancellationToken cancellation = default)
+        {
+            return await _validator.ValidateAsync((T)instance, cancellation);
+        }
+
+        public ValidationResult Validate(IValidationContext context) => throw new NotImplementedException();
+        public Task<ValidationResult> ValidateAsync(IValidationContext context, CancellationToken cancellation = default) => throw new NotImplementedException();
+        public IValidatorDescriptor CreateDescriptor() => throw new NotImplementedException();
+        public bool CanValidateInstancesOfType(Type type) => typeof(T).IsAssignableFrom(type);
     }
 }

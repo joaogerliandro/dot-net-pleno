@@ -7,11 +7,13 @@ using StallosDotnetPleno.Infrastructure.Interfaces;
 using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Domain.Validators;
 using FluentValidation;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<PersonValidator>());
 
 builder.Services.AddEndpointsApiExplorer();
 

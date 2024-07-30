@@ -13,7 +13,7 @@ namespace StallosDotnetPleno.Domain.Entities
         protected Notifier Notifier { get; } = new Notifier();
         
         [NotMapped]
-        protected EntityValidatorAdapter<BaseEntity> Validator { get; set; }
+        protected IValidator<BaseEntity> Validator { get; set; }
 
         [NotMapped]
         public bool IsValid { get; private set; }
@@ -24,13 +24,19 @@ namespace StallosDotnetPleno.Domain.Entities
 
         public void SetValidator<T>(IValidator<T> validator) where T : BaseEntity
         {
-            Validator = new EntityValidatorAdapter<T>(validator) as EntityValidatorAdapter<BaseEntity>;
+            Validator = new EntityValidatorAdapter<T>(validator) as IValidator<BaseEntity>;
         }
 
         public void Validate()
         {
-            Validator?.Validate(this, Notifier);
-            IsValid = !(HasNotifications());
+            var validationResult = Validator.Validate(this);
+
+            foreach (var error in validationResult.Errors)
+            {
+                Notifier.AddNotification(error.PropertyName, error.ErrorMessage);
+            }
+
+            IsValid = !Notifier.HasNotifications();
         }
     }
 }

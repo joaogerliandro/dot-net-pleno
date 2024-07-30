@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Application.Interfaces;
+using System.Text.Json;
 
 namespace StallosDotnetPleno.Api.Controllers
 {
@@ -65,28 +66,41 @@ namespace StallosDotnetPleno.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePerson([FromBody] Person person)
+        public async Task<IActionResult> CreatePerson(object input)
         {
-            var result = await _personService.AddAsync(person);
-
-            if (!result.Success)
+            try
             {
-                _logger.LogWarning(result.Message);
+                Person person = JsonSerializer.Deserialize<Person>(input.ToString());
 
-                return BadRequest(new
+                var result = await _personService.AddAsync(person);
+
+                if (!result.Success)
+                {
+                    _logger.LogWarning(result.Message);
+
+                    return BadRequest(new
+                    {
+                        Success = result.Success,
+                        Message = result.Message,
+                        Notifications = result.Notifications
+                    });
+                }
+
+                return Ok(new
                 {
                     Success = result.Success,
                     Message = result.Message,
-                    Notifications = result.Notifications
+                    Content = result.Content
                 });
             }
-
-            return Ok(new
+            catch (JsonException ex)
             {
-                Success = result.Success,
-                Message = result.Message,
-                Content = result.Content
-            });
+                return BadRequest(new {
+                    Success = false,
+                    Message = "Invalid JSON format.",
+                    Errors = new Dictionary<string, string[]> { { "Json", new[] { ex.Message } } }
+                });
+            }
         }
 
         [HttpPut("{id}")]

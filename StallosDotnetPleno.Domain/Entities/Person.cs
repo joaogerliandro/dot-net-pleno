@@ -1,4 +1,5 @@
 ﻿using StallosDotnetPleno.Domain.Enums;
+using StallosDotnetPleno.Domain.Validators;
 
 namespace StallosDotnetPleno.Domain.Entities
 {
