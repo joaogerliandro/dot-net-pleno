@@ -16,8 +16,8 @@ namespace StallosDotnetPleno.Domain.Validators
             RuleFor(person => person.Document)
                 .NotEmpty().WithMessage("Document cannot be empty.")
                 .NotNull().WithMessage("Document cannot be null.")
-                .MaximumLength(14).WithMessage("Document cannot exceed 14 characters.")
-                .MinimumLength(11).WithMessage("Document must have at least 11 characters.");
+                .Must((person, document) => IsValidDocumentForType(person.Type, document))
+                .WithMessage(person => GetDocumentValidationErrorMessage(person.Type, person.Document));
 
             RuleFor(person => person.Type)
                 .NotEmpty().WithMessage("Type cannot be empty.")
@@ -35,6 +35,43 @@ namespace StallosDotnetPleno.Domain.Validators
         private bool BeAValidPersonType(string personType)
         {
             return Enum.TryParse(typeof(PersonType), personType, true, out _);
+        }
+
+        private bool IsValidDocumentForType(string type, string document)
+        {
+            if (Enum.TryParse(typeof(PersonType), type, out var personType))
+            {
+                if ((PersonType)personType == PersonType.PF)
+                {
+                    return DocumentValidator.IsValidCpf(document);
+                }
+                else if ((PersonType)personType == PersonType.PJ)
+                {
+                    return DocumentValidator.IsValidCnpj(document);
+                }
+            }
+
+            return false;
+        }
+
+        private string GetDocumentValidationErrorMessage(string type, string document)
+        {
+            bool isCpf = DocumentValidator.IsValidCpf(document);
+            bool isCnpj = DocumentValidator.IsValidCnpj(document);
+
+            if (Enum.TryParse(typeof(PersonType), type, out var personType))
+            {
+                if ((PersonType)personType == PersonType.PF)
+                {
+                    return isCpf ? "Type should be PJ, but Document is valid for Type PF." : "Document is invalid for Type PF.";
+                }
+                else if ((PersonType)personType == PersonType.PJ)
+                {
+                    return isCnpj ? "Type should be PF, but Document is valid for Type PJ." : "Document is invalid for Type PJ.";
+                }
+            }
+
+            return "Document and Type are both invalid.";
         }
     }
 }
