@@ -1,4 +1,5 @@
 ﻿using StallosDotnetPleno.Application.Interfaces;
+using StallosDotnetPleno.Application.ResultObjects;
 using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Domain.Interfaces;
 using StallosDotnetPleno.Infrastructure.Interfaces;
@@ -17,57 +18,116 @@ namespace StallosDotnetPleno.Application.Services
             _validator = validator;
         }
 
-        public async Task<IEnumerable<Person>> GetAllAsync()
+        public async Task<ContentResult> GetAllAsync()
         {
-            return await _repository.GetAllAsync();
+            var persons = await _repository.GetAllAsync();
+
+            if (persons == null || !persons.Any())
+            {
+                return new ContentResult { 
+                    Success = false, 
+                    Message = "No persons available"
+                };
+            }
+
+            return new ContentResult
+            {
+                Success = true,
+                Message = "Persons retrieved successfully.",
+                Content = persons
+            };
         }
 
-        public async Task<Person> GetByIdAsync(long id)
+        public async Task<ContentResult> GetByIdAsync(long id)
         {
-            return await _repository.GetByIdAsync(id);
+            var person = await _repository.GetByIdAsync(id);
+
+            if (person == null)
+            {
+                return new ContentResult
+                {
+                    Success = false,
+                    Message = String.Format("Person with id {0} not found.", id)
+                };
+            }
+
+            return new ContentResult
+            {
+                Success = true,
+                Message = "Person found.",
+                Content = person
+            };
         }
 
-        public async Task AddAsync(Person person)
+        public async Task<ContentResult> AddAsync(Person person)
         {
             person.SetValidator(_validator);
             person.Validate();
 
             if(!person.IsValid)
             {
-                // Notify
+                return new ContentResult
+                {
+                    Success = false,
+                    Message = String.Format("Informed person is invalid. Get more details at Notifications below."),
+                    Notifications = person.GetNotifications()
+                };
             }
 
             await _repository.AddAsync(person);
+
+            return new ContentResult
+            {
+                Success = true,
+                Message = "Person created successfully.",
+                Content = new { PersonId = person.Id }
+            };
         }
 
-        public async Task UpdateAsync(Person person)
+        public async Task<ContentResult> UpdateAsync(Person person)
         {
             person.SetValidator(_validator);
             person.Validate();
 
             if (!person.IsValid)
             {
-                // Notify
+                return new ContentResult
+                {
+                    Success = false,
+                    Message = String.Format("Informed person is invalid. Get more details at Notifications below."),
+                    Notifications = person.GetNotifications()
+                };
             }
 
             await _repository.UpdateAsync(person);
+
+            return new ContentResult
+            {
+                Success = true,
+                Message = "Person updated successfully."
+            };
         }
 
-        public async Task DeleteAsync(long id)
+        public async Task<BaseResult> DeleteAsync(long id)
         {
             var person = await _repository.GetByIdAsync(id);
 
             if (person == null)
             {
-                // Notify
+                return new BaseResult
+                {
+                    Success = false,
+                    Message = String.Format("Person with id {0} not found.", id)
+                };
             }
 
             await _repository.DeleteAsync(person);
-        }
 
-        public async Task<IEnumerable<Person>> FindAsync(Expression<Func<Person, bool>> predicate)
-        {
-            return await _repository.FindAsync(predicate);
+            return new BaseResult
+            {
+                Success = true,
+                Message = "Person deleted successfully.",
+            };
         }
     }
 }

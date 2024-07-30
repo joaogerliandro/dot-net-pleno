@@ -18,81 +18,122 @@ namespace StallosDotnetPleno.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Person>> GetPersonById(long id)
+        public async Task<IActionResult> GetPersonById(long id)
         {
-            var person = await _personService.GetByIdAsync(id);
+            var result = await _personService.GetByIdAsync(id);
 
-            if (person == null)
+            if (!result.Success)
             {
-                _logger.LogWarning($"Person with id {id} not found.");
-                return NotFound();
+                _logger.LogWarning(result.Message);
+
+                return BadRequest(new { 
+                    Success = result.Success,
+                    Message = result.Message
+                });
             }
 
-            return Ok(person);
+            return Ok(new
+            {
+                Success = result.Success,
+                Message = result.Message,
+                Content = result.Content
+            });
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Person>>> GetAllPersons()
+        public async Task<IActionResult> GetAllPersons()
         {
-            var persons = await _personService.GetAllAsync();
+            var result = await _personService.GetAllAsync();
 
-            return Ok(persons);
+            if (!result.Success)
+            {
+                _logger.LogWarning(result.Message);
+
+                return BadRequest(new
+                {
+                    Success = result.Success,
+                    Message = result.Message
+                });
+            }
+
+            return Ok(new
+            {
+                Success = result.Success,
+                Message = result.Message,
+                Content = result.Content
+            });
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreatePerson([FromBody] Person person)
+        public async Task<IActionResult> CreatePerson([FromBody] Person person)
         {
-            if (person == null)
-            {
-                _logger.LogWarning("Person object is null.");
+            var result = await _personService.AddAsync(person);
 
-                return BadRequest();
+            if (!result.Success)
+            {
+                _logger.LogWarning(result.Message);
+
+                return BadRequest(new
+                {
+                    Success = result.Success,
+                    Message = result.Message,
+                    Notifications = result.Notifications
+                });
             }
 
-            await _personService.AddAsync(person);
-
-            return CreatedAtAction(nameof(GetPersonById), new { id = person.Id }, person);
+            return Ok(new
+            {
+                Success = result.Success,
+                Message = result.Message,
+                Content = result.Content
+            });
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdatePerson(long id, [FromBody] Person person)
+        public async Task<IActionResult> UpdatePerson(long id, [FromBody] Person person)
         {
-            if (id != person.Id)
-            {
-                _logger.LogWarning("Person ID mismatch.");
+            var result = await _personService.UpdateAsync(person);
 
-                return BadRequest();
+            if (!result.Success)
+            {
+                _logger.LogWarning(result.Message);
+
+                return BadRequest(new
+                {
+                    Success = result.Success,
+                    Message = result.Message,
+                    Notifications = result.Notifications
+                });
             }
 
-            var existingPerson = await _personService.GetByIdAsync(id);
-
-            if (existingPerson == null)
+            return Ok(new
             {
-                _logger.LogWarning($"Person with id {id} not found.");
-
-                return NotFound();
-            }
-
-            await _personService.UpdateAsync(person);
-
-            return NoContent(); // TODO: Change this for an update message
+                Success = result.Success,
+                Message = result.Message
+            });
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeletePerson(long id)
+        public async Task<IActionResult> DeletePerson(long id)
         {
-            var person = await _personService.GetByIdAsync(id);
+            var result = await _personService.DeleteAsync(id);
 
-            if (person == null)
+            if (!result.Success)
             {
-                _logger.LogWarning($"Person with id {id} not found.");
+                _logger.LogWarning(result.Message);
 
-                return NotFound();
+                return BadRequest(new
+                {
+                    Success = result.Success,
+                    Message = result.Message,
+                });
             }
 
-            await _personService.DeleteAsync(id);
-
-            return NoContent(); // TODO: Change this for a delete message
+            return Ok(new
+            {
+                Success = result.Success,
+                Message = result.Message
+            });
         }
     }
 }

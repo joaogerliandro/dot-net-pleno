@@ -9,6 +9,5 @@ namespace StallosDotnetPleno.Infrastructure.Interfaces
         Task<IEnumerable<T>> GetAllAsync();
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
-        Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
     }
 }

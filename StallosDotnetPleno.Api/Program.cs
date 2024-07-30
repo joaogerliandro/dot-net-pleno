@@ -25,7 +25,6 @@ builder.Services.AddScoped<IRepository<Address>, AddressRepository>();
 
 // Register services
 builder.Services.AddScoped<IPersonService, PersonService>();
-builder.Services.AddScoped<IAddressService, AddressService>();
 
 // Register validators
 builder.Services.AddScoped<IValidator<Person>, PersonValidator>();

@@ -45,10 +45,5 @@ namespace StallosDotnetPleno.Infrastructure.Repositories
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
         }
-
-        public async Task<IEnumerable<Person>> FindAsync(Expression<Func<Person, bool>> predicate)
-        {
-            return await _dbSet.Where(predicate).ToListAsync();
-        }
     }
 }

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StallosDotnetPleno.Domain\StallosDotnetPleno.Domain.csproj" />
+    <ProjectReference Include="..\StallosDotnetPleno.Domain\StallosDotnetPleno.Domain.csproj" />
     <ProjectReference Include="..\StallosDotnetPleno.Infrastructure\StallosDotnetPleno.Infrastructure.csproj" />
   </ItemGroup>
 
