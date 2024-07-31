@@ -9,11 +9,11 @@ namespace StallosDotnetPleno.Application.Services
 {
     public class PersonService : IPersonService
     {
-        private readonly IRepository<Person> _repository;
+        private readonly IPersonRepository _repository;
         private readonly IPersonTypeRepository _personTypeRepository;
         private readonly IValidator<Person> _validator;
 
-        public PersonService(IRepository<Person> repository, IPersonTypeRepository personTypeRepository, IValidator<Person> validator)
+        public PersonService(IPersonRepository repository, IPersonTypeRepository personTypeRepository, IValidator<Person> validator)
         {
             _repository = repository;
             _personTypeRepository = personTypeRepository;
@@ -89,7 +89,16 @@ namespace StallosDotnetPleno.Application.Services
 
             person.PrepareToDatabase(dbPersonType);
 
-            // Validate existence
+            Person personRegistry = await _repository.GetByDocumentAsync(person.Document);
+
+            if(personRegistry != null)
+            {
+                return new ContentResult
+                {
+                    Success = true,
+                    Message = String.Format("Informed person already exists. Try with another credentials.")
+                };
+            }
 
             await _repository.AddAsync(person);
 
