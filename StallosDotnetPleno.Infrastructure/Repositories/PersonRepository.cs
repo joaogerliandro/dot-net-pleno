@@ -25,18 +25,26 @@ namespace StallosDotnetPleno.Infrastructure.Repositories
 
         public async Task<Person> GetByIdAsync(long id)
         {
-            return await _dbSet.FindAsync(id);
+            return await _dbSet
+                .Include(person => person.RealType)
+                .Include(person => person.Addresses)
+                .SingleOrDefaultAsync(person => person.Id == id);
         }
 
         public async Task<IEnumerable<Person>> GetAllAsync()
         {
-            return await _dbSet.ToListAsync();
+            return await _dbSet
+                .Include(person => person.RealType) 
+                .Include(person => person.Addresses) 
+                .ToListAsync();
         }
 
         public async Task<Person> GetByDocumentAsync(string document)
         {
-            return await _context.Persons
-                .FirstOrDefaultAsync(person => person.Document == document);
+            return await _dbSet
+                .Include(person => person.RealType) 
+                .Include(person => person.Addresses)
+                .SingleOrDefaultAsync(person => person.Document == document);
         }
 
         public async Task UpdateAsync(Person entity)

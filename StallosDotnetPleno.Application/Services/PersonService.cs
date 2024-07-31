@@ -4,6 +4,7 @@ using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Infrastructure.Interfaces;
 using FluentValidation;
 using StallosDotnetPleno.Domain.Enums;
+using StallosDotnetPleno.Application.Mappers;
 
 namespace StallosDotnetPleno.Application.Services
 {
@@ -32,11 +33,13 @@ namespace StallosDotnetPleno.Application.Services
                 };
             }
 
+            var personDtos = persons.ToDtoList();
+
             return new ContentResult
             {
                 Success = true,
                 Message = "Persons retrieved successfully.",
-                Content = persons
+                Content = personDtos
             };
         }
 
@@ -53,11 +56,13 @@ namespace StallosDotnetPleno.Application.Services
                 };
             }
 
+            var personDto = person.ToDto();
+
             return new ContentResult
             {
                 Success = true,
                 Message = "Person found.",
-                Content = person
+                Content = personDto
             };
         }
 
