@@ -3,17 +3,20 @@ using StallosDotnetPleno.Application.ResultObjects;
 using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Infrastructure.Interfaces;
 using FluentValidation;
+using StallosDotnetPleno.Domain.Enums;
 
 namespace StallosDotnetPleno.Application.Services
 {
     public class PersonService : IPersonService
     {
         private readonly IRepository<Person> _repository;
+        private readonly IPersonTypeRepository _personTypeRepository;
         private readonly IValidator<Person> _validator;
 
-        public PersonService(IRepository<Person> repository, IValidator<Person> validator)
+        public PersonService(IRepository<Person> repository, IPersonTypeRepository personTypeRepository, IValidator<Person> validator)
         {
             _repository = repository;
+            _personTypeRepository = personTypeRepository;
             _validator = validator;
         }
 
@@ -72,6 +75,21 @@ namespace StallosDotnetPleno.Application.Services
                     Notifications = person.GetNotifications()
                 };
             }
+
+            PersonTypeEnum personTypeEnum = (PersonTypeEnum) Enum.Parse(typeof(PersonTypeEnum), person.Type);
+
+            PersonType dbPersonType = await _personTypeRepository.GetByTypeAsync(personTypeEnum); // Get the current Type ID
+
+            if(dbPersonType == null) // If not exists
+            {
+                await _personTypeRepository.AddAsync(new PersonType(personTypeEnum)); // Add enum to database
+
+                dbPersonType = await _personTypeRepository.GetByTypeAsync(personTypeEnum); // Get inserted enum with ID
+            }
+
+            person.PrepareToDatabase(dbPersonType);
+
+            // Validate existence
 
             await _repository.AddAsync(person);
 

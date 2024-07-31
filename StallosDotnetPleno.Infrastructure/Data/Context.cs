@@ -8,7 +8,10 @@ namespace StallosDotnetPleno.Infrastructure.Data
         public Context(DbContextOptions<Context> options) : base(options) { }
 
         public DbSet<Person> Persons { get; set; }
+
         public DbSet<Address> Addresses { get; set; }
+
+        public DbSet<PersonType> PersonTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

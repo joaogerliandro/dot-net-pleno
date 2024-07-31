@@ -21,6 +21,10 @@ namespace LibraryManagementSystem.Infrastructure.Data.Configurations
             builder.HasIndex(p => p.Document)
                 .IsUnique();
 
+            builder.HasOne(p => p.RealType)
+                .WithMany()
+                .HasForeignKey("ID_TIPO_PESSOA");
+
             builder.HasMany(p => p.Addresses)
                 .WithMany(a => a.Persons)
                 .UsingEntity<Dictionary<string, object>>(

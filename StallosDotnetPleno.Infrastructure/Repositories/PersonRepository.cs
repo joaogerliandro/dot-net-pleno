@@ -2,7 +2,6 @@
 using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Infrastructure.Interfaces;
 using StallosDotnetPleno.Infrastructure.Data;
-using System.Linq.Expressions;
 
 namespace StallosDotnetPleno.Infrastructure.Repositories
 {

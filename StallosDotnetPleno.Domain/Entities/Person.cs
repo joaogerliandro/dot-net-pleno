@@ -1,5 +1,7 @@
 ﻿using StallosDotnetPleno.Domain.Enums;
-using StallosDotnetPleno.Domain.Validators;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace StallosDotnetPleno.Domain.Entities
 {
@@ -7,9 +9,11 @@ namespace StallosDotnetPleno.Domain.Entities
     {
         public string Name { get; private set; }
 
-        private PersonType _type { get; set; }
+        [JsonIgnore]
+        public PersonType RealType { get; set; }
 
-        public string Type {  get; private set; }
+        [NotMapped]
+        public string Type { get; private set; }
 
         public string Document { get; private set; }
 
@@ -23,6 +27,12 @@ namespace StallosDotnetPleno.Domain.Entities
             Type = type;
             Document = document;
             Addresses = addresses;
+        }
+
+        public void PrepareToDatabase(PersonType realType)
+        {
+            RealType = realType;
+            Document = Regex.Replace(Document, @"[^\d]", "");
         }
     }
 }

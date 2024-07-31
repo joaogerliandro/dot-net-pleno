@@ -34,18 +34,18 @@ namespace StallosDotnetPleno.Domain.Validators
 
         private bool BeAValidPersonType(string personType)
         {
-            return Enum.TryParse(typeof(PersonType), personType, true, out _);
+            return Enum.TryParse(typeof(PersonTypeEnum), personType, true, out _);
         }
 
         private bool IsValidDocumentForType(string type, string document)
         {
-            if (Enum.TryParse(typeof(PersonType), type, out var personType))
+            if (Enum.TryParse(typeof(PersonTypeEnum), type, out var personType))
             {
-                if ((PersonType)personType == PersonType.PF)
+                if ((PersonTypeEnum)personType == PersonTypeEnum.PF)
                 {
                     return DocumentValidator.IsValidCpf(document);
                 }
-                else if ((PersonType)personType == PersonType.PJ)
+                else if ((PersonTypeEnum)personType == PersonTypeEnum.PJ)
                 {
                     return DocumentValidator.IsValidCnpj(document);
                 }
@@ -59,13 +59,13 @@ namespace StallosDotnetPleno.Domain.Validators
             bool isCpf = DocumentValidator.IsValidCpf(document);
             bool isCnpj = DocumentValidator.IsValidCnpj(document);
 
-            if (Enum.TryParse(typeof(PersonType), type, out var personType))
+            if (Enum.TryParse(typeof(PersonTypeEnum), type, out var personType))
             {
-                if ((PersonType)personType == PersonType.PF)
+                if ((PersonTypeEnum)personType == PersonTypeEnum.PF)
                 {
                     return isCpf ? "Type should be PJ, but Document is valid for Type PF." : "Document is invalid for Type PF.";
                 }
-                else if ((PersonType)personType == PersonType.PJ)
+                else if ((PersonTypeEnum)personType == PersonTypeEnum.PJ)
                 {
                     return isCnpj ? "Type should be PF, but Document is valid for Type PJ." : "Document is invalid for Type PJ.";
                 }

@@ -24,6 +24,7 @@ builder.Services.AddDbContext<Context>(options =>
 // Register repositories
 builder.Services.AddScoped<IRepository<Person>, PersonRepository>();
 builder.Services.AddScoped<IRepository<Address>, AddressRepository>();
+builder.Services.AddScoped<IPersonTypeRepository, PersonTypeRepository>();
 
 // Register services
 builder.Services.AddScoped<IPersonService, PersonService>();
