@@ -5,7 +5,7 @@ using StallosDotnetPleno.Infrastructure.Data;
 
 namespace StallosDotnetPleno.Infrastructure.Repositories
 {
-    public class PersonRepository : IRepository<Person>
+    public class PersonRepository : IPersonRepository
     {
         private readonly Context _context;
 
@@ -31,6 +31,12 @@ namespace StallosDotnetPleno.Infrastructure.Repositories
         public async Task<IEnumerable<Person>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
+        }
+
+        public async Task<Person> GetByDocumentAsync(string document)
+        {
+            return await _context.Persons
+                .FirstOrDefaultAsync(person => person.Document == document);
         }
 
         public async Task UpdateAsync(Person entity)

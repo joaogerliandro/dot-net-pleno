@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace StallosDotnetPleno.Infrastructure.Repositories
 {
-    public class AddressRepository : IRepository<Address>
+    public class AddressRepository : IAddressRepository
     {
         private readonly Context _context;
 
@@ -44,11 +44,6 @@ namespace StallosDotnetPleno.Infrastructure.Repositories
         {
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
-        }
-
-        public async Task<IEnumerable<Address>> FindAsync(Expression<Func<Address, bool>> predicate)
-        {
-            return await _dbSet.Where(predicate).ToListAsync();
         }
     }
 }

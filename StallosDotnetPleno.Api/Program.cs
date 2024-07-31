@@ -22,8 +22,8 @@ builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseConnection")));
 
 // Register repositories
-builder.Services.AddScoped<IRepository<Person>, PersonRepository>();
-builder.Services.AddScoped<IRepository<Address>, AddressRepository>();
+builder.Services.AddScoped<IPersonRepository, PersonRepository>();
+builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IPersonTypeRepository, PersonTypeRepository>();
 
 // Register services

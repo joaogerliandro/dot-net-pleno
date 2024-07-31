@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using StallosDotnetPleno.Domain.Entities;
+using StallosDotnetPleno.Domain.Enums;
 
 namespace StallosDotnetPleno.Infrastructure.Data.Configurations
 {
@@ -13,7 +14,10 @@ namespace StallosDotnetPleno.Infrastructure.Data.Configurations
             builder.HasKey(personType => personType.Id);
 
             builder.Property(personType => personType.Type)
-                .HasColumnName("TIPO");
+                .HasColumnName("TIPO")
+                .HasConversion(
+                    v => (byte)v,
+                    v => (PersonTypeEnum)v);
         }
     }
 }
