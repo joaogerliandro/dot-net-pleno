@@ -178,20 +178,20 @@ namespace StallosDotnetPleno.Application.Services
             };
         }
 
-        public async Task<BaseResult> DeleteAsync(long id)
+        public async Task<BaseResult> DeleteAsync(long personId)
         {
-            var person = await _repository.GetByIdAsync(id);
+            var person = await _repository.GetByIdAsync(personId);
 
             if (person == null)
             {
                 return new BaseResult
                 {
                     Success = false,
-                    Message = String.Format("Person with id {0} not found.", id)
+                    Message = String.Format("Person with id {0} not found.", personId)
                 };
             }
 
-            await _repository.DeleteAsync(person);
+            await _repository.DeleteAsync(personId);
 
             return new BaseResult
             {

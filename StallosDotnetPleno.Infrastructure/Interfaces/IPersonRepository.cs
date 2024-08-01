@@ -9,6 +9,6 @@ namespace StallosDotnetPleno.Infrastructure.Interfaces
         Task<IEnumerable<Person>> GetAllAsync();
         Task<Person> GetByDocumentAsync(string document);
         Task UpdateAsync(long id, Person person);
-        Task DeleteAsync(Person person);
+        Task DeleteAsync(long personId);
     }
 }
