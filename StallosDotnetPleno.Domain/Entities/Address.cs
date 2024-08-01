@@ -28,5 +28,15 @@
             StateCode = stateCode;
             Persons = persons;
         }
+
+        public void Update(Address updatedAddress)
+        {
+            ZipCode = updatedAddress.ZipCode;
+            Street = updatedAddress.Street;
+            Number = updatedAddress.Number;
+            District = updatedAddress.District;
+            City = updatedAddress.City;
+            StateCode = updatedAddress.StateCode;
+        }
     }
 }

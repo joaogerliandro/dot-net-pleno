@@ -2,6 +2,7 @@
 using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Infrastructure.Interfaces;
 using StallosDotnetPleno.Infrastructure.Data;
+using System;
 
 namespace StallosDotnetPleno.Infrastructure.Repositories
 {
@@ -9,12 +10,15 @@ namespace StallosDotnetPleno.Infrastructure.Repositories
     {
         private readonly Context _context;
 
+        private readonly IAddressRepository _addressRepository;
+
         private readonly DbSet<Person> _dbSet;
 
-        public PersonRepository(Context context)
+        public PersonRepository(Context context, IAddressRepository addressRepository)
         {
             _context = context;
             _dbSet = context.Set<Person>();
+            _addressRepository = addressRepository;
         }
 
         public async Task AddAsync(Person entity)
@@ -49,7 +53,7 @@ namespace StallosDotnetPleno.Infrastructure.Repositories
 
         public async Task UpdateAsync(Person entity)
         {
-            _dbSet.Update(entity);
+            _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
 

@@ -27,8 +27,9 @@ namespace StallosDotnetPleno.Application.Services
 
             if (persons == null || !persons.Any())
             {
-                return new ContentResult { 
-                    Success = false, 
+                return new ContentResult
+                {
+                    Success = false,
                     Message = "No persons available"
                 };
             }
@@ -71,7 +72,7 @@ namespace StallosDotnetPleno.Application.Services
             person.SetValidator(_validator);
             person.Validate();
 
-            if(!person.IsValid)
+            if (!person.IsValid)
             {
                 return new ContentResult
                 {
@@ -81,11 +82,11 @@ namespace StallosDotnetPleno.Application.Services
                 };
             }
 
-            PersonTypeEnum personTypeEnum = (PersonTypeEnum) Enum.Parse(typeof(PersonTypeEnum), person.Type);
+            PersonTypeEnum personTypeEnum = (PersonTypeEnum)Enum.Parse(typeof(PersonTypeEnum), person.Type);
 
             PersonType dbPersonType = await _personTypeRepository.GetByTypeAsync(personTypeEnum); // Get the current Type ID
 
-            if(dbPersonType == null) // If not exists
+            if (dbPersonType == null) // If not exists
             {
                 await _personTypeRepository.AddAsync(new PersonType(personTypeEnum)); // Add enum to database
 
@@ -96,12 +97,12 @@ namespace StallosDotnetPleno.Application.Services
 
             Person personRegistry = await _repository.GetByDocumentAsync(person.Document);
 
-            if(personRegistry != null)
+            if (personRegistry != null)
             {
                 return new ContentResult
                 {
                     Success = true,
-                    Message = String.Format("Informed person already exists. Try with another credentials.")
+                    Message = String.Format("The document is already attached to another person. Try with another credential.")
                 };
             }
 
@@ -115,8 +116,19 @@ namespace StallosDotnetPleno.Application.Services
             };
         }
 
-        public async Task<ContentResult> UpdateAsync(Person person)
+        public async Task<ContentResult> UpdateAsync(long personId, Person person)
         {
+            var personToUpdate = await _repository.GetByIdAsync(personId);
+
+            if (personToUpdate == null)
+            {
+                return new ContentResult
+                {
+                    Success = false,
+                    Message = String.Format("Person with id {0} not found.", personId)
+                };
+            }
+
             person.SetValidator(_validator);
             person.Validate();
 
@@ -130,7 +142,38 @@ namespace StallosDotnetPleno.Application.Services
                 };
             }
 
-            await _repository.UpdateAsync(person);
+            PersonTypeEnum personTypeEnum = (PersonTypeEnum)Enum.Parse(typeof(PersonTypeEnum), person.Type);
+
+            PersonType dbPersonType = await _personTypeRepository.GetByTypeAsync(personTypeEnum); // Get the current Type ID
+
+            if (dbPersonType == null) // If not exists
+            {
+                await _personTypeRepository.AddAsync(new PersonType(personTypeEnum)); // Add enum to database
+
+                dbPersonType = await _personTypeRepository.GetByTypeAsync(personTypeEnum); // Get inserted enum with ID
+            }
+
+            person.PrepareToDatabase(dbPersonType);
+
+            personToUpdate.UpdateEntity(person);
+
+            if (personToUpdate.Document != person.Document)
+            {
+                Person personRegistry = await _repository.GetByDocumentAsync(person.Document);
+
+                if (personRegistry != null)
+                {
+                    return new ContentResult
+                    {
+                        Success = true,
+                        Message = String.Format("The document is already attached to another person. Try with another credential.")
+                    };
+                }
+
+                personToUpdate.UpdateDocument(person.Document);
+            }
+
+            await _repository.UpdateAsync(personToUpdate); // Update the Person Info
 
             return new ContentResult
             {

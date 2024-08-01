@@ -104,27 +104,41 @@ namespace StallosDotnetPleno.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePerson(long id, [FromBody] Person person)
+        public async Task<IActionResult> UpdatePerson(long id, object input)
         {
-            var result = await _personService.UpdateAsync(person);
-
-            if (!result.Success)
+            try
             {
-                _logger.LogWarning(result.Message);
+                Person person = JsonSerializer.Deserialize<Person>(input.ToString());
 
-                return BadRequest(new
+                var result = await _personService.UpdateAsync(id, person);
+
+                if (!result.Success)
+                {
+                    _logger.LogWarning(result.Message);
+
+                    return BadRequest(new
+                    {
+                        Success = result.Success,
+                        Message = result.Message,
+                        Notifications = result.Notifications
+                    });
+                }
+
+                return Ok(new
                 {
                     Success = result.Success,
-                    Message = result.Message,
-                    Notifications = result.Notifications
+                    Message = result.Message
                 });
             }
-
-            return Ok(new
+            catch (JsonException ex)
             {
-                Success = result.Success,
-                Message = result.Message
-            });
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "Invalid JSON format.",
+                    Errors = new Dictionary<string, string[]> { { "Json", new[] { ex.Message } } }
+                });
+            }
         }
 
         [HttpDelete("{id}")]

@@ -9,7 +9,7 @@ namespace StallosDotnetPleno.Application.Interfaces
         Task<ContentResult> GetAllAsync();
         Task<ContentResult> GetByIdAsync(long id);
         Task<ContentResult> AddAsync(Person person);
-        Task<ContentResult> UpdateAsync(Person person);
+        Task<ContentResult> UpdateAsync(long id, Person person);
         Task<BaseResult> DeleteAsync(long id);
     }
 }
