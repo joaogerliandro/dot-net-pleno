@@ -155,8 +155,6 @@ namespace StallosDotnetPleno.Application.Services
 
             person.PrepareToDatabase(dbPersonType);
 
-            personToUpdate.UpdateEntity(person);
-
             if (personToUpdate.Document != person.Document)
             {
                 Person personRegistry = await _repository.GetByDocumentAsync(person.Document);
@@ -169,11 +167,9 @@ namespace StallosDotnetPleno.Application.Services
                         Message = String.Format("The document is already attached to another person. Try with another credential.")
                     };
                 }
-
-                personToUpdate.UpdateDocument(person.Document);
             }
 
-            await _repository.UpdateAsync(personToUpdate); // Update the Person Info
+            await _repository.UpdateAsync(personId, person); // Update the Person Info
 
             return new ContentResult
             {

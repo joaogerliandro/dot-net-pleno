@@ -26,7 +26,7 @@
             District = district;
             City = city;
             StateCode = stateCode;
-            Persons = persons;
+            Persons = persons ?? new List<Person>();
         }
 
         public void Update(Address updatedAddress)

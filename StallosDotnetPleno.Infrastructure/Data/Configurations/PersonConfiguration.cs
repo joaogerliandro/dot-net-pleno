@@ -10,23 +10,23 @@ namespace LibraryManagementSystem.Infrastructure.Data.Configurations
         {
             builder.ToTable("TB_PESSOA");
 
-            builder.HasKey(p => p.Id);
+            builder.HasKey(person => person.Id);
 
-            builder.Property(p => p.Name)
+            builder.Property(person => person.Name)
                 .HasColumnName("NOME");
 
-            builder.Property(p => p.Document)
+            builder.Property(person => person.Document)
                 .HasColumnName("DOCUMENTO");
 
-            builder.HasIndex(p => p.Document)
+            builder.HasIndex(person => person.Document)
                 .IsUnique();
 
-            builder.HasOne(p => p.RealType)
+            builder.HasOne(person => person.RealType)
                 .WithMany()
                 .HasForeignKey("ID_TIPO_PESSOA");
 
-            builder.HasMany(p => p.Addresses)
-                .WithMany(a => a.Persons)
+            builder.HasMany(person => person.Addresses)
+                .WithMany(address => address.Persons)
                 .UsingEntity<Dictionary<string, object>>(
                     "TB_PESSOA_ENDERECO",
                     j => j.HasOne<Address>().WithMany().HasForeignKey("ID_ENDERECO"),

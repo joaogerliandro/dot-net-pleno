@@ -2,7 +2,6 @@
 using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Infrastructure.Interfaces;
 using StallosDotnetPleno.Infrastructure.Data;
-using System;
 
 namespace StallosDotnetPleno.Infrastructure.Repositories
 {
@@ -10,15 +9,12 @@ namespace StallosDotnetPleno.Infrastructure.Repositories
     {
         private readonly Context _context;
 
-        private readonly IAddressRepository _addressRepository;
-
         private readonly DbSet<Person> _dbSet;
 
-        public PersonRepository(Context context, IAddressRepository addressRepository)
+        public PersonRepository(Context context)
         {
             _context = context;
             _dbSet = context.Set<Person>();
-            _addressRepository = addressRepository;
         }
 
         public async Task AddAsync(Person entity)
@@ -51,9 +47,29 @@ namespace StallosDotnetPleno.Infrastructure.Repositories
                 .SingleOrDefaultAsync(person => person.Document == document);
         }
 
-        public async Task UpdateAsync(Person entity)
+        public async Task UpdateAsync(long personId, Person entity)
         {
-            _context.Entry(entity).State = EntityState.Modified;
+            var existingPerson = await GetByIdAsync(personId);
+
+            foreach(var address in existingPerson.Addresses)
+            {
+                _context.Entry(address).State = EntityState.Deleted;
+            }
+
+            existingPerson.UpdateEntity(entity);
+
+            if (existingPerson.Document != entity.Document)
+            {
+                existingPerson.UpdateDocument(entity.Document);
+            }
+
+            foreach (var address in entity.Addresses)
+            {
+                address.Persons.Add(existingPerson);
+                _context.Addresses.Add(address);
+            }
+
+            _context.Entry(existingPerson).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
 

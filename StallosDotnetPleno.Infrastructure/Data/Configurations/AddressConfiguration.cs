@@ -10,38 +10,38 @@ namespace StallosDotnetPleno.Infrastructure.Data.Configurations
         {
             builder.ToTable("TB_ENDERECO");
 
-            builder.HasKey(a => a.Id);
+            builder.HasKey(address => address.Id);
 
-            builder.Property(a => a.ZipCode)
+            builder.Property(address => address.ZipCode)
                 .HasColumnName("CEP")
                 .IsRequired()
                 .HasMaxLength(8);
 
-            builder.Property(a => a.Street)
+            builder.Property(address => address.Street)
                 .HasColumnName("LOGRADOURO")
                 .IsRequired()
                 .HasMaxLength(255);
 
-            builder.Property(a => a.Number)
+            builder.Property(address => address.Number)
                 .HasColumnName("NUMERO")
                 .HasMaxLength(7);
 
-            builder.Property(a => a.District)
+            builder.Property(address => address.District)
                 .HasColumnName("BAIRRO")
                 .IsRequired()
                 .HasMaxLength(30);
 
-            builder.Property(a => a.City)
+            builder.Property(address => address.City)
                 .HasColumnName("CIDADE")
                 .IsRequired()
                 .HasMaxLength(30);
 
-            builder.Property(a => a.StateCode)
+            builder.Property(address => address.StateCode)
                 .HasColumnName("UF")
                 .IsRequired()
                 .HasMaxLength(2);
 
-            builder.HasIndex(a => a.ZipCode);
+            builder.HasIndex(address => address.ZipCode);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace StallosDotnetPleno.Domain.Entities
             Name = name;
             Type = type;
             Document = document;
-            Addresses = addresses;
+            Addresses = addresses ?? new List<Address>();
         }
 
         public void PrepareToDatabase(PersonType realType)
@@ -39,30 +39,6 @@ namespace StallosDotnetPleno.Domain.Entities
         {
             Name = changedPerson.Name;
             Type = changedPerson.Type;
-            Addresses = changedPerson.Addresses;
-
-            foreach (var updatedAddress in changedPerson.Addresses)
-            {
-                var existingAddress = Addresses.FirstOrDefault(a => a.Id == updatedAddress.Id);
-
-                if (existingAddress != null)
-                {
-                    existingAddress.Update(updatedAddress);
-                }
-                else
-                {
-                    Addresses.Add(updatedAddress);
-                }
-            }
-
-            var addressesToRemove = Addresses
-                .Where(a => !changedPerson.Addresses.Any(ua => ua.Id == a.Id))
-                .ToList();
-
-            foreach (var addressToRemove in addressesToRemove)
-            {
-                Addresses.Remove(addressToRemove);
-            }
         }
 
         public void UpdateDocument(string document)
