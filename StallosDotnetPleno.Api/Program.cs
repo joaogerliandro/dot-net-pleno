@@ -25,12 +25,16 @@ builder.Services.AddDbContext<Context>(options =>
 builder.Services.AddScoped<IPersonRepository, PersonRepository>();
 builder.Services.AddScoped<IPersonTypeRepository, PersonTypeRepository>();
 
-// Register services
-builder.Services.AddScoped<IPersonService, PersonService>();
-
 // Register validators
 builder.Services.AddScoped<IValidator<Person>, PersonValidator>();
 builder.Services.AddScoped<IValidator<Address>, AddressValidator>();
+
+// Register services
+builder.Services.AddScoped<IPersonService, PersonService>();
+
+// Register hosted service and task queue
+builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+builder.Services.AddHostedService<BackgroundTaskService>();
 
 /*
     Authentication Services

@@ -12,13 +12,15 @@ namespace StallosDotnetPleno.Application.Services
     {
         private readonly IPersonRepository _repository;
         private readonly IPersonTypeRepository _personTypeRepository;
+        private readonly IBackgroundTaskQueue _backgroundTaskQueue;
         private readonly IValidator<Person> _validator;
 
-        public PersonService(IPersonRepository repository, IPersonTypeRepository personTypeRepository, IValidator<Person> validator)
+        public PersonService(IPersonRepository repository, IPersonTypeRepository personTypeRepository, IValidator<Person> validator, IBackgroundTaskQueue backgroundTaskQueue)
         {
             _repository = repository;
             _personTypeRepository = personTypeRepository;
             _validator = validator;
+            _backgroundTaskQueue = backgroundTaskQueue;
         }
 
         public async Task<ContentResult> GetAllAsync()
@@ -107,6 +109,12 @@ namespace StallosDotnetPleno.Application.Services
             }
 
             await _repository.AddAsync(person);
+
+            _backgroundTaskQueue.QueueBackgroundWorkItem(async token =>
+            {
+                await Task.Delay(1000, token); // Add 1 sec delay to garant Person database insertion
+                await ConsultPersonPublicList(person);
+            });
 
             return new ContentResult
             {
@@ -198,6 +206,11 @@ namespace StallosDotnetPleno.Application.Services
                 Success = true,
                 Message = "Person deleted successfully.",
             };
+        }
+
+        private async Task ConsultPersonPublicList(Person person)
+        {
+            // TODO: Roaster API Consume + Database Insertion
         }
     }
 }
