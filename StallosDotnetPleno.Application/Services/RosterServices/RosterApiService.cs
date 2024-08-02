@@ -107,7 +107,7 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
         private async Task<Token> GenerateToken()
         {
             var client = new HttpClient();
-            var requestUri = _configHelper.RosterApiHostname + "token";
+            var requestUri = _configHelper.RosterOAuthHostname + "token";
             var request = new HttpRequestMessage(HttpMethod.Post, requestUri);
 
             request.Headers.Add("accept", "*/*");

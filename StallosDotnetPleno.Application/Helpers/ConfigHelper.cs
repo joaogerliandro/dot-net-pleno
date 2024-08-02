@@ -11,6 +11,14 @@ namespace StallosDotnetPleno.Application.Helpers
             _configuration = configuration;
         }
 
+        public string RosterOAuthHostname
+        {
+            get
+            {
+                return _configuration["AppSettings:RosterOAuthHostname"];
+            }
+        }
+
         public string RosterApiHostname
         {
             get
