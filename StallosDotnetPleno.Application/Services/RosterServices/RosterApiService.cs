@@ -23,7 +23,7 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
             _token = new Token { Key = null, ExpirationDateTime = null };
         }
 
-        public async Task<ICollection<PublicList>> ConsultPersonPublicList(Person person)
+        public async Task<List<PublicList>> ConsultPersonPublicList(Person person)
         {
             switch (person.RealType.Type)
             {
@@ -36,9 +36,9 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
             }
         }
 
-        private async Task<ICollection<PublicList>> ConsultPFPublicLists(Person person)
+        private async Task<List<PublicList>> ConsultPFPublicLists(Person person)
         {
-            ICollection<PublicList> publicList = null;
+            List<PublicList> publicList = new List<PublicList>();
 
             if (await ConsultList("bolsa-familia", person)) { publicList.Add(new PublicList("bolsa-familia", person)); }
             if (await ConsultList("pep", person)) { publicList.Add(new PublicList("pep", person)); }
@@ -47,9 +47,9 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
             return publicList;
         }
 
-        private async Task<ICollection<PublicList>> ConsultPJPublicLists(Person person)
+        private async Task<List<PublicList>> ConsultPJPublicLists(Person person)
         {
-            ICollection<PublicList> publicList = null;
+            List<PublicList> publicList = new List<PublicList>();
 
             if (await ConsultList("cepim", person)) { publicList.Add(new PublicList("cepim", person)); }
             if (await ConsultList("ofac", person)) { publicList.Add(new PublicList("ofac", person)); }
