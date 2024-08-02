@@ -1,14 +1,14 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace StallosDotnetPleno.Application.ResultObjects
 {
     public class TokenResult
     {
-        [JsonPropertyName("access_token")]
+        [JsonProperty("access_token")]
         public string Key;
-        [JsonPropertyName("expires_in")]
-        public long ExpirationDateTime;
-        [JsonPropertyName("token_type")]
+        [JsonProperty("expires_in")]
+        public int ExpirationDateTime;
+        [JsonProperty("token_type")]
         public string TokenType;
     }
 }

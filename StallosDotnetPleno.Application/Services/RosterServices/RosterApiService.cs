@@ -3,10 +3,9 @@ using StallosDotnetPleno.Application.Interfaces;
 using StallosDotnetPleno.Application.ResultObjects;
 using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Domain.Enums;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace StallosDotnetPleno.Application.Services.RosterServices
 {
@@ -129,7 +128,7 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
-                var tokenResponse = JsonSerializer.Deserialize<TokenResult>(responseBody);
+                var tokenResponse = JsonConvert.DeserializeObject<TokenResult>(responseBody);
 
                 if (!string.IsNullOrEmpty(tokenResponse.Key))
                 {
@@ -181,7 +180,7 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
             };
 
             request.Content = new StringContent(
-                JsonSerializer.Serialize(requestBody),
+                JsonConvert.SerializeObject(requestBody),
                 System.Text.Encoding.UTF8,
                 "application/json"
             );
@@ -191,7 +190,7 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
-                var protocolResult = JsonSerializer.Deserialize<ProtocolResult>(responseBody);
+                var protocolResult = JsonConvert.DeserializeObject<ProtocolResult>(responseBody);
 
                 return String.IsNullOrEmpty(protocolResult.Protocol) ? string.Empty : protocolResult.Protocol;
             }

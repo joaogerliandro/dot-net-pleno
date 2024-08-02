@@ -1,12 +1,10 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace StallosDotnetPleno.Application.ResultObjects
 {
     public class ProtocolResult
     {
-        [JsonPropertyName("Protocolo")]
+        [JsonProperty("Protocolo")]
         public string Protocol { get; set; }
-        [JsonPropertyName("Message")]
-        public string Message { get; set; }
     }
 }
