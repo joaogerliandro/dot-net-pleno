@@ -6,6 +6,7 @@ namespace StallosDotnetPleno.Application.ResultObjects
     {
         [JsonPropertyName("Protocolo")]
         public string Protocol { get; set; }
+        [JsonPropertyName("Message")]
         public string Message { get; set; }
     }
 }

@@ -3,7 +3,9 @@ using StallosDotnetPleno.Application.Interfaces;
 using StallosDotnetPleno.Application.ResultObjects;
 using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Domain.Enums;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 
 namespace StallosDotnetPleno.Application.Services.RosterServices
@@ -13,10 +15,13 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
         private readonly ConfigHelper _configHelper;
         private readonly Dictionary<string, string> _protocolCache;
 
+        public Token _token;
+
         public RosterApiService(ConfigHelper configHelper)
         {
             _configHelper = configHelper;
             _protocolCache = new Dictionary<string, string>();
+            _token = new Token { Key = null, ExpirationDateTime = null };
         }
 
         public async Task<ICollection<PublicList>> ConsultPersonPublicList(Person person)
@@ -55,8 +60,7 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
 
         private async Task<bool> ConsultList(string listName, Person person)
         {
-            var token = "token"; // Get Token
-
+            var token = await GetAccessToken();
             var protocol = await GetProtocol(listName, token);
             var requestUri = await PrepareRequestUri(_configHelper.RosterApiHostname, listName, person);
 
@@ -90,6 +94,58 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
             return uri;
         }
 
+        private async Task<string> GetAccessToken()
+        {
+            if ((String.IsNullOrEmpty(_token.Key) && _token.ExpirationDateTime == null) || DateTime.UtcNow >= _token.ExpirationDateTime)
+            {
+                _token = await GenerateToken();
+            }
+
+            return _token.Key;
+        }
+
+        private async Task<Token> GenerateToken()
+        {
+            var client = new HttpClient();
+            var requestUri = _configHelper.RosterApiHostname + "token";
+            var request = new HttpRequestMessage(HttpMethod.Post, requestUri);
+
+            request.Headers.Add("accept", "*/*");
+
+            var byteArray = Encoding.ASCII.GetBytes($"{_configHelper.RosterClientId}:{_configHelper.RosterSecret}");
+
+            request.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            var collection = new List<KeyValuePair<string, string>>
+            {
+                new("grant_type", "client_credentials"),
+                new("scope", "opendata/opendata")
+            };
+
+            request.Content = new FormUrlEncodedContent(collection);
+
+            var response = await client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var tokenResponse = JsonSerializer.Deserialize<TokenResult>(responseBody);
+
+                if (!string.IsNullOrEmpty(tokenResponse.Key))
+                {
+                    return new Token { Key = tokenResponse.Key, ExpirationDateTime = DateTime.UtcNow.AddSeconds(tokenResponse.ExpirationDateTime) };
+                }
+                else
+                {
+                    return new Token { Key = null, ExpirationDateTime = null };
+                }
+            }
+            else
+            {
+                return new Token { Key = null, ExpirationDateTime = null };
+            }
+        }
+
         private async Task<string> GetProtocol(string listName, string token)
         {
             if (!(_protocolCache.TryGetValue(listName, out var protocol)) || String.IsNullOrEmpty(protocol)) // If not exists in the cache, create a new one
@@ -105,7 +161,8 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
         private async Task<string> CreateProtocol(string listName, string token)
         {
             var client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, _configHelper.RosterApiHostname + "protocolo");
+            var requestUri = _configHelper.RosterApiHostname + "protocolo";
+            var request = new HttpRequestMessage(HttpMethod.Post, requestUri);
 
             request.Headers.Add("accept", "application/json");
             request.Headers.Add("x-api-key", _configHelper.RosterXApi);
