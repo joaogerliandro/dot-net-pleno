@@ -22,7 +22,8 @@ namespace StallosDotnetPleno.Application.Mappers
                     Bairro = address.District,
                     Cidade = address.City,
                     UF = address.StateCode
-                }).ToList()
+                }).ToList(),
+                Listas = person.PublicLists.Select(publicList => publicList.ListName).ToList()
             };
         }
 

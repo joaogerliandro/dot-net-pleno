@@ -7,5 +7,7 @@
         public string TipoPessoa { get; set; }
         public string Documento { get; set; }
         public List<AddressDto> Endereços { get; set; }
+
+        public List<string> Listas { get; set; }
     }
 }

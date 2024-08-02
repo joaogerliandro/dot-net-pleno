@@ -34,6 +34,10 @@ namespace StallosDotnetPleno.Application.Services
                 {
                     await personRepository.UpdatePersonListAsync(person.Id, personPublicList);
                 }
+                else
+                {
+                    await personRepository.DeletePersonListIfExistAsync(person.Id);
+                }
             }
         }
     }

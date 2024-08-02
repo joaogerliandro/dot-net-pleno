@@ -11,5 +11,6 @@ namespace StallosDotnetPleno.Infrastructure.Interfaces
         Task UpdateAsync(long id, Person person);
         Task UpdatePersonListAsync(long personId, List<PublicList> personLists);
         Task DeleteAsync(long personId);
+        Task DeletePersonListIfExistAsync(long personId);
     }
 }

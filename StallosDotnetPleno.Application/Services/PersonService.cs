@@ -179,6 +179,8 @@ namespace StallosDotnetPleno.Application.Services
 
             await _repository.UpdateAsync(personId, person); // Update the Person Info
 
+            await EnqueueConsultPersonPublicListAsync(personToUpdate); // Re-consult person public list
+
             return new ContentResult
             {
                 Success = true,

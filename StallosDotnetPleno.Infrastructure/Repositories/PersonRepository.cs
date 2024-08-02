@@ -106,5 +106,21 @@ namespace StallosDotnetPleno.Infrastructure.Repositories
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task DeletePersonListIfExistAsync(long personId)
+        {
+            var existingPerson = await GetByIdAsync(personId);
+
+            if (existingPerson.PublicLists != null)
+            {
+                foreach (var publicList in existingPerson.PublicLists)
+                {
+                    _context.Entry(publicList).State = EntityState.Deleted;
+                }
+            }
+
+            _context.Entry(existingPerson).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
     }
 }
