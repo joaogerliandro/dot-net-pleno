@@ -18,6 +18,9 @@ namespace StallosDotnetPleno.Domain.Entities
 
         public ICollection<Address> Addresses { get; private set; }
 
+        [JsonIgnore]
+        public ICollection<PublicList> PublicLists { get; private set; }
+
         private Person() { }
 
         public Person(string name, string type, string document, ICollection<Address> addresses)
@@ -43,6 +46,11 @@ namespace StallosDotnetPleno.Domain.Entities
         public void UpdateDocument(string document)
         {
             Document = Document;
+        }
+
+        public void UpdatePublicLists(ICollection<PublicList> publicLists) 
+        {
+            PublicLists = publicLists;
         }
     }
 }

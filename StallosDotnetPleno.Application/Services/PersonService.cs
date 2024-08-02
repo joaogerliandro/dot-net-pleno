@@ -13,14 +13,16 @@ namespace StallosDotnetPleno.Application.Services
         private readonly IPersonRepository _repository;
         private readonly IPersonTypeRepository _personTypeRepository;
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+        private readonly IRosterApiService _rosterApiService;
         private readonly IValidator<Person> _validator;
 
-        public PersonService(IPersonRepository repository, IPersonTypeRepository personTypeRepository, IValidator<Person> validator, IBackgroundTaskQueue backgroundTaskQueue)
+        public PersonService(IPersonRepository repository, IPersonTypeRepository personTypeRepository, IValidator<Person> validator, IBackgroundTaskQueue backgroundTaskQueue, IRosterApiService rosterApiService)
         {
             _repository = repository;
             _personTypeRepository = personTypeRepository;
             _validator = validator;
             _backgroundTaskQueue = backgroundTaskQueue;
+            _rosterApiService = rosterApiService;
         }
 
         public async Task<ContentResult> GetAllAsync()
@@ -210,7 +212,14 @@ namespace StallosDotnetPleno.Application.Services
 
         private async Task ConsultPersonPublicList(Person person)
         {
-            // TODO: Roaster API Consume + Database Insertion
+            var personPublicList = await _rosterApiService.ConsultPersonPublicList(person);
+
+            if(personPublicList != null)
+            {
+                person.UpdatePublicLists(personPublicList);
+
+                // Update Person Public List into Database
+            }
         }
     }
 }

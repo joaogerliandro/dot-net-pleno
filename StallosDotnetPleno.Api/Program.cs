@@ -9,6 +9,7 @@ using StallosDotnetPleno.Domain.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using StallosDotnetPleno.Application.Helpers;
+using StallosDotnetPleno.Application.Services.RosterServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,7 @@ builder.Services.AddScoped<IValidator<Address>, AddressValidator>();
 
 // Register services
 builder.Services.AddScoped<IPersonService, PersonService>();
+builder.Services.AddScoped<IRosterApiService, RosterApiService>();
 
 // Register hosted service and task queue
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
