@@ -8,6 +8,7 @@ using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Domain.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using StallosDotnetPleno.Application.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,9 @@ builder.Services.AddScoped<IPersonService, PersonService>();
 // Register hosted service and task queue
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 builder.Services.AddHostedService<BackgroundTaskService>();
+
+// Register helpers
+builder.Services.AddSingleton<ConfigHelper>();
 
 /*
     Authentication Services
