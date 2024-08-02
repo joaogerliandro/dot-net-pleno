@@ -1,6 +1,5 @@
 ﻿using StallosDotnetPleno.Application.ResultObjects;
 using StallosDotnetPleno.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace StallosDotnetPleno.Application.Interfaces
 {

@@ -1,6 +1,4 @@
-﻿using StallosDotnetPleno.Domain.Notifications;
-
-namespace StallosDotnetPleno.Application.ResultObjects
+﻿namespace StallosDotnetPleno.Application.ResultObjects
 {
     public class ContentResult : BaseResult
     {

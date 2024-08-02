@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using StallosDotnetPleno.Domain.Notifications;
-using StallosDotnetPleno.Domain.Validators;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
