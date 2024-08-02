@@ -79,7 +79,7 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
             string uri = url + listName + "?nome=" + Uri.EscapeDataString(person.Name);
 
             if (listName == "bolsa-familia" || listName == "pep" || listName == "interpol")
-                uri += "&cpf=" + person.Document;
+                uri += "&cpf=" + Uri.EscapeDataString(person.Document);
 
             return uri;
         }
