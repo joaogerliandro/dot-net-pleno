@@ -5,6 +5,7 @@ using StallosDotnetPleno.Infrastructure.Interfaces;
 using FluentValidation;
 using StallosDotnetPleno.Domain.Enums;
 using StallosDotnetPleno.Application.Mappers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace StallosDotnetPleno.Application.Services
 {
@@ -13,16 +14,17 @@ namespace StallosDotnetPleno.Application.Services
         private readonly IPersonRepository _repository;
         private readonly IPersonTypeRepository _personTypeRepository;
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
-        private readonly IRosterApiService _rosterApiService;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IValidator<Person> _validator;
 
-        public PersonService(IPersonRepository repository, IPersonTypeRepository personTypeRepository, IValidator<Person> validator, IBackgroundTaskQueue backgroundTaskQueue, IRosterApiService rosterApiService)
+        public PersonService(IPersonRepository repository, IPersonTypeRepository personTypeRepository, IValidator<Person> validator,
+            IBackgroundTaskQueue backgroundTaskQueue, IServiceProvider serviceProvider)
         {
             _repository = repository;
             _personTypeRepository = personTypeRepository;
             _validator = validator;
             _backgroundTaskQueue = backgroundTaskQueue;
-            _rosterApiService = rosterApiService;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<ContentResult> GetAllAsync()
@@ -112,11 +114,7 @@ namespace StallosDotnetPleno.Application.Services
 
             await _repository.AddAsync(person);
 
-            _backgroundTaskQueue.QueueBackgroundWorkItem(async token =>
-            {
-                await Task.Delay(1000, token); // Add 1 sec delay to garant Person database insertion
-                await ConsultPersonPublicList(person);
-            });
+            await EnqueueConsultPersonPublicListAsync(person);
 
             return new ContentResult
             {
@@ -210,16 +208,16 @@ namespace StallosDotnetPleno.Application.Services
             };
         }
 
-        private async Task ConsultPersonPublicList(Person person)
+        private async Task EnqueueConsultPersonPublicListAsync(Person person)
         {
-            var personPublicList = await _rosterApiService.ConsultPersonPublicList(person);
-
-            if(personPublicList != null)
+            _backgroundTaskQueue.QueueBackgroundWorkItem(async token =>
             {
-                person.UpdatePublicLists(personPublicList);
-
-                // Update Person Public List into Database
-            }
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var scopedProcessingService = scope.ServiceProvider.GetRequiredService<IBackgroundProcessingService>();
+                    await scopedProcessingService.ConsultPersonPublicListAsync(person);
+                }
+            });
         }
     }
 }

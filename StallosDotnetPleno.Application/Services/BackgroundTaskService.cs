@@ -1,17 +1,21 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using StallosDotnetPleno.Application.Interfaces;
 
 namespace StallosDotnetPleno.Application.Services
 {
     public class BackgroundTaskService : BackgroundService
     {
         private readonly IBackgroundTaskQueue _taskQueue;
+        private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<BackgroundTaskService> _logger;
 
-        public BackgroundTaskService(IBackgroundTaskQueue taskQueue, ILogger<BackgroundTaskService> logger)
+        public BackgroundTaskService(IBackgroundTaskQueue taskQueue, ILogger<BackgroundTaskService> logger, IServiceProvider serviceProvider)
         {
             _taskQueue = taskQueue;
             _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -29,7 +33,11 @@ namespace StallosDotnetPleno.Application.Services
 
                 try
                 {
-                    await workItem(stoppingToken);
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var scopedProcessingService = scope.ServiceProvider.GetRequiredService<IBackgroundProcessingService>();
+                        await scopedProcessingService.ProcessWorkItemAsync(workItem, stoppingToken);
+                    }
                 }
                 catch (Exception ex)
                 {

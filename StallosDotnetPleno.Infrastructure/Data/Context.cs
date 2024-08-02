@@ -13,6 +13,8 @@ namespace StallosDotnetPleno.Infrastructure.Data
 
         public DbSet<PersonType> PersonTypes { get; set; }
 
+        public DbSet<PublicList> PublicLists { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

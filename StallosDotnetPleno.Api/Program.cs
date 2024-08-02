@@ -34,6 +34,7 @@ builder.Services.AddScoped<IValidator<Address>, AddressValidator>();
 // Register services
 builder.Services.AddScoped<IPersonService, PersonService>();
 builder.Services.AddScoped<IRosterApiService, RosterApiService>();
+builder.Services.AddScoped<IBackgroundProcessingService, BackgroundProcessingService>();
 
 // Register hosted service and task queue
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();

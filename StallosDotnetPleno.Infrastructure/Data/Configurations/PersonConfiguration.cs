@@ -32,6 +32,9 @@ namespace LibraryManagementSystem.Infrastructure.Data.Configurations
                     j => j.HasOne<Address>().WithMany().HasForeignKey("ID_ENDERECO"),
                     j => j.HasOne<Person>().WithMany().HasForeignKey("ID_PESSOA"),
                     j => j.HasKey("ID_PESSOA", "ID_ENDERECO"));
+
+            builder.HasMany(person => person.PublicLists)
+                .WithOne(publicList => publicList.Person);
         }
     }
 }

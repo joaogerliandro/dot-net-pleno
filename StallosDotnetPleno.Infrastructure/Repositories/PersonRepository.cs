@@ -28,6 +28,7 @@ namespace StallosDotnetPleno.Infrastructure.Repositories
             return await _dbSet
                 .Include(person => person.RealType)
                 .Include(person => person.Addresses)
+                .Include(person => person.PublicLists)
                 .SingleOrDefaultAsync(person => person.Id == id);
         }
 
@@ -35,7 +36,8 @@ namespace StallosDotnetPleno.Infrastructure.Repositories
         {
             return await _dbSet
                 .Include(person => person.RealType) 
-                .Include(person => person.Addresses) 
+                .Include(person => person.Addresses)
+                .Include(person => person.PublicLists)
                 .ToListAsync();
         }
 
@@ -44,6 +46,7 @@ namespace StallosDotnetPleno.Infrastructure.Repositories
             return await _dbSet
                 .Include(person => person.RealType) 
                 .Include(person => person.Addresses)
+                .Include(person => person.PublicLists)
                 .SingleOrDefaultAsync(person => person.Document == document);
         }
 
@@ -68,6 +71,24 @@ namespace StallosDotnetPleno.Infrastructure.Repositories
                 address.Persons.Add(existingPerson);
                 _context.Addresses.Add(address);
             }
+
+            _context.Entry(existingPerson).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdatePersonListAsync(long personId, List<PublicList> personLists)
+        {
+            var existingPerson = await GetByIdAsync(personId);
+
+            if(existingPerson.PublicLists != null)
+            {
+                foreach (var publicList in existingPerson.PublicLists)
+                {
+                    _context.Entry(publicList).State = EntityState.Deleted;
+                }
+            }
+
+            existingPerson.UpdatePublicLists(personLists);
 
             _context.Entry(existingPerson).State = EntityState.Modified;
             await _context.SaveChangesAsync();
