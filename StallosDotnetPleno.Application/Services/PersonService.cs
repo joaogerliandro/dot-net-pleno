@@ -14,17 +14,17 @@ namespace StallosDotnetPleno.Application.Services
         private readonly IPersonRepository _repository;
         private readonly IPersonTypeRepository _personTypeRepository;
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
-        private readonly IServiceProvider _serviceProvider;
         private readonly IValidator<Person> _validator;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         public PersonService(IPersonRepository repository, IPersonTypeRepository personTypeRepository, IValidator<Person> validator,
-            IBackgroundTaskQueue backgroundTaskQueue, IServiceProvider serviceProvider)
+            IBackgroundTaskQueue backgroundTaskQueue, IServiceScopeFactory serviceScopeFactory)
         {
             _repository = repository;
             _personTypeRepository = personTypeRepository;
             _validator = validator;
             _backgroundTaskQueue = backgroundTaskQueue;
-            _serviceProvider = serviceProvider;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public async Task<ContentResult> GetAllAsync()
@@ -212,7 +212,7 @@ namespace StallosDotnetPleno.Application.Services
         {
             _backgroundTaskQueue.QueueBackgroundWorkItem(async token =>
             {
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     var scopedProcessingService = scope.ServiceProvider.GetRequiredService<IBackgroundProcessingService>();
                     await scopedProcessingService.ConsultPersonPublicListAsync(person);

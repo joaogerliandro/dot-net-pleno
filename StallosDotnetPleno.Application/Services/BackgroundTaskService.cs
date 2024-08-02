@@ -8,14 +8,14 @@ namespace StallosDotnetPleno.Application.Services
     public class BackgroundTaskService : BackgroundService
     {
         private readonly IBackgroundTaskQueue _taskQueue;
-        private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<BackgroundTaskService> _logger;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public BackgroundTaskService(IBackgroundTaskQueue taskQueue, ILogger<BackgroundTaskService> logger, IServiceProvider serviceProvider)
+        public BackgroundTaskService(IBackgroundTaskQueue taskQueue, ILogger<BackgroundTaskService> logger, IServiceScopeFactory serviceScopeFactory)
         {
             _taskQueue = taskQueue;
             _logger = logger;
-            _serviceProvider = serviceProvider;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -33,7 +33,7 @@ namespace StallosDotnetPleno.Application.Services
 
                 try
                 {
-                    using (var scope = _serviceProvider.CreateScope())
+                    using (var scope = _serviceScopeFactory.CreateScope())
                     {
                         var scopedProcessingService = scope.ServiceProvider.GetRequiredService<IBackgroundProcessingService>();
                         await scopedProcessingService.ProcessWorkItemAsync(workItem, stoppingToken);

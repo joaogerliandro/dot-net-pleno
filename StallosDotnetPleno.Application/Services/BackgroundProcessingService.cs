@@ -1,4 +1,5 @@
-﻿using StallosDotnetPleno.Application.Interfaces;
+﻿using Microsoft.Extensions.DependencyInjection;
+using StallosDotnetPleno.Application.Interfaces;
 using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Infrastructure.Interfaces;
 using System.Threading.Tasks;
@@ -7,12 +8,12 @@ namespace StallosDotnetPleno.Application.Services
 {
     public class BackgroundProcessingService : IBackgroundProcessingService
     {
-        private readonly IPersonRepository _personRepository;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IRosterApiService _rosterApiService;
 
-        public BackgroundProcessingService(IPersonRepository personRepository, IRosterApiService rosterApiService)
+        public BackgroundProcessingService(IServiceScopeFactory serviceScopeFactory, IRosterApiService rosterApiService)
         {
-            _personRepository = personRepository;
+            _serviceScopeFactory = serviceScopeFactory;
             _rosterApiService = rosterApiService;
         }
 
@@ -23,11 +24,16 @@ namespace StallosDotnetPleno.Application.Services
 
         public async Task ConsultPersonPublicListAsync(Person person)
         {
-            var personPublicList = await _rosterApiService.ConsultPersonPublicList(person);
-
-            if (personPublicList != null && personPublicList.Count > 0)
+            using (var scope = _serviceScopeFactory.CreateScope())
             {
-                await _personRepository.UpdatePersonListAsync(person.Id, personPublicList);
+                var personRepository = scope.ServiceProvider.GetRequiredService<IPersonRepository>();
+
+                var personPublicList = await _rosterApiService.ConsultPersonPublicList(person);
+
+                if (personPublicList != null && personPublicList.Count > 0)
+                {
+                    await personRepository.UpdatePersonListAsync(person.Id, personPublicList);
+                }
             }
         }
     }
