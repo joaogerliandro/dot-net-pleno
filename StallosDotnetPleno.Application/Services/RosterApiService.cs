@@ -7,7 +7,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace StallosDotnetPleno.Application.Services.RosterServices
+namespace StallosDotnetPleno.Application.Services
 {
     public class RosterApiService : IRosterApiService
     {
@@ -95,7 +95,7 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
 
         private async Task<string> GetAccessToken()
         {
-            if ((String.IsNullOrEmpty(_token.Key) && _token.ExpirationDateTime == null) || DateTime.UtcNow >= _token.ExpirationDateTime)
+            if (string.IsNullOrEmpty(_token.Key) && _token.ExpirationDateTime == null || DateTime.UtcNow >= _token.ExpirationDateTime)
             {
                 _token = await GenerateToken();
             }
@@ -147,10 +147,10 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
 
         private async Task<string> GetProtocol(string listName, string token)
         {
-            if (!(_protocolCache.TryGetValue(listName, out var protocol)) || String.IsNullOrEmpty(protocol)) // If not exists in the cache, create a new one
+            if (!_protocolCache.TryGetValue(listName, out var protocol) || string.IsNullOrEmpty(protocol)) // If not exists in the cache, create a new one
             {
-                protocol = await CreateProtocol(listName, token); 
-                
+                protocol = await CreateProtocol(listName, token);
+
                 _protocolCache[listName] = protocol; // Add protocol to cache
             }
 
@@ -181,7 +181,7 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
 
             request.Content = new StringContent(
                 JsonConvert.SerializeObject(requestBody),
-                System.Text.Encoding.UTF8,
+                Encoding.UTF8,
                 "application/json"
             );
 
@@ -192,7 +192,7 @@ namespace StallosDotnetPleno.Application.Services.RosterServices
                 var responseBody = await response.Content.ReadAsStringAsync();
                 var protocolResult = JsonConvert.DeserializeObject<ProtocolResult>(responseBody);
 
-                return String.IsNullOrEmpty(protocolResult.Protocol) ? string.Empty : protocolResult.Protocol;
+                return string.IsNullOrEmpty(protocolResult.Protocol) ? string.Empty : protocolResult.Protocol;
             }
             else
             {

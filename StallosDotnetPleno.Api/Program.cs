@@ -9,7 +9,11 @@ using StallosDotnetPleno.Domain.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using StallosDotnetPleno.Application.Helpers;
-using StallosDotnetPleno.Application.Services.RosterServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication;
+using StallosDotnetPleno.Api.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +39,7 @@ builder.Services.AddScoped<IValidator<Address>, AddressValidator>();
 builder.Services.AddScoped<IPersonService, PersonService>();
 builder.Services.AddScoped<IRosterApiService, RosterApiService>();
 builder.Services.AddScoped<IBackgroundProcessingService, BackgroundProcessingService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Register hosted service and task queue
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
@@ -43,9 +48,31 @@ builder.Services.AddHostedService<BackgroundTaskService>();
 // Register helpers
 builder.Services.AddSingleton<ConfigHelper>();
 
-/*
-    Authentication Services
- */
+// Configure Basic authentication
+builder.Services.AddAuthentication("Basic")
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Basic", null);
+
+// Configure JWT authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false, 
+        ValidateAudience = false, 
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:ApiSecret"]))
+    };
+});
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddSwaggerGen();
 
@@ -59,14 +86,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "LibraryManagementSystem API v1");
-        c.RoutePrefix = string.Empty;
-    });
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+
 app.UseAuthorization();
 app.MapControllers();
 

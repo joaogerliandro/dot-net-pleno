@@ -2,11 +2,14 @@
 using StallosDotnetPleno.Domain.Entities;
 using StallosDotnetPleno.Application.Interfaces;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StallosDotnetPleno.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("pessoa")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PersonController : ControllerBase
     {
         private readonly IPersonService _personService;

@@ -11,6 +11,30 @@ namespace StallosDotnetPleno.Application.Helpers
             _configuration = configuration;
         }
 
+        public string BasicAuthUsername
+        {
+            get
+            {
+                return _configuration["Basic:BasicAuthUsername"];
+            }
+        }
+
+        public string BasicAuthPassword
+        {
+            get
+            {
+                return _configuration["Basic:BasicAuthPassword"];
+            }
+        }
+
+        public string ApiSecret
+        {
+            get
+            {
+                return _configuration["Jwt:ApiSecret"];
+            }
+        }
+
         public string RosterOAuthHostname
         {
             get
